@@ -6,7 +6,8 @@
 CMD(terminal, "st");
 CMD(browser, "firefox");
 
-extern void toggle_horizontal(void); // New function for horizontal layout
+extern void toggle_horizontal(void); // New: Horizontal layout
+extern void toggle_monocle(void);    // New: Monocle layout
 
 const Binding binds[] = {
     {Mod4Mask | ShiftMask, XK_e, {.fn = quit}, TYPE_FUNC},
@@ -26,6 +27,7 @@ const Binding binds[] = {
     {Mod4Mask, XK_l, {.fn = resize_master_add}, TYPE_FUNC},
     {Mod4Mask, XK_h, {.fn = resize_master_sub}, TYPE_FUNC},
     {Mod4Mask, XK_t, {.fn = toggle_horizontal}, TYPE_FUNC}, // New: Horizontal layout
+    {Mod4Mask, XK_m, {.fn = toggle_monocle}, TYPE_FUNC},    // New: Monocle layout
 
     {Mod4Mask | ControlMask, XK_l, {.fn = resize_stack_add}, TYPE_FUNC},
     {Mod4Mask | ControlMask, XK_h, {.fn = resize_stack_sub}, TYPE_FUNC},
