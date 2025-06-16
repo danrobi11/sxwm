@@ -14,6 +14,7 @@
 #include "defs.h"
 
 extern void toggle_horizontal(void); // New: Horizontal layout
+extern void toggle_monocle(void);    // New: Monocle layout
 
 static const struct {
     const char *name;
@@ -40,6 +41,7 @@ static const struct {
     {"global_floating", toggle_floating_global},
     {"fullscreen", toggle_fullscreen},
     {"horizontal", toggle_horizontal}, // New: Horizontal layout
+    {"monocle", toggle_monocle},       // New: Monocle layout
     {NULL, NULL}
 };
 
