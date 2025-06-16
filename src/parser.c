@@ -13,8 +13,8 @@
 #include "parser.h"
 #include "defs.h"
 
-extern void toggle_horizontal(void); // New: Horizontal layout
-extern void toggle_monocle(void);    // New: Monocle layout
+extern void toggle_horizontal(void);
+extern void toggle_monocle(void);
 
 static const struct {
     const char *name;
@@ -40,8 +40,8 @@ static const struct {
     {"toggle_floating", toggle_floating},
     {"global_floating", toggle_floating_global},
     {"fullscreen", toggle_fullscreen},
-    {"horizontal", toggle_horizontal}, // New: Horizontal layout
-    {"monocle", toggle_monocle},       // New: Monocle layout
+    {"horizontal", toggle_horizontal},
+    {"monocle", toggle_monocle},
     {NULL, NULL}
 };
 
