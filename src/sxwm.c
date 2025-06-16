@@ -1963,11 +1963,3 @@ void tile(void)
                 if (c->x != wc.x || c->y != wc.y || c->w != wc.width || c->h != wc.height) {
                     XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
                 }
-                c->x = wc.x;
-                c->y = wc.y;
-                c->w = wc.width;
-                c->h = wc.height;
-            }
-            update_borders();
-            continue;
-        }
