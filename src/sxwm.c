@@ -36,7 +36,7 @@
 #include "defs.h"
 #include "parser.h"
 
-// New: Layout enum for TILE, HORIZONTAL, MONOCLE
+// Layout enum for TILE, HORIZONTAL, MONOCLE
 typedef enum { TILE, HORIZONTAL, MONOCLE } Layout;
 
 Client *add_client(Window w, int ws);
@@ -92,8 +92,8 @@ void tile(void);
 void toggle_floating(void);
 void toggle_floating_global(void);
 void toggle_fullscreen(void);
-void toggle_horizontal(void); // New: Horizontal layout
-void toggle_monocle(void);   // New: Monocle layout
+void toggle_horizontal(void);
+void toggle_monocle(void);
 void update_borders(void);
 void update_client_desktop_properties(void);
 void update_monitors(void);
@@ -157,8 +157,8 @@ int reserve_bottom = 0;
 
 Bool next_should_float = False;
 
-// New: Array to track layout per monitor
-static Layout layout[MAX_MONITORS] = {TILE}; // Default to TILE for all monitors
+// Array to track layout per monitor
+static Layout layout[MAX_MONITORS] = {TILE}; // Default to TILE
 
 Client *add_client(Window w, int ws)
 {
@@ -227,7 +227,7 @@ Client *add_client(Window w, int ws)
     c->mapped = True;
     c->custom_stack_height = 0;
 
-    // New: Set new windows to non-floating in MONOCLE mode
+    // Set new windows to non-floating in MONOCLE mode
     if (layout[c->mon] == MONOCLE) {
         c->floating = False;
     } else if (global_floating) {
@@ -1051,7 +1051,7 @@ void hdl_map_req(XEvent *xev)
         c->fixed = True;
     }
 
-    // New: Override should_float in MONOCLE mode
+    // Override should_float in MONOCLE mode
     if (layout[c->mon] == MONOCLE) {
         should_float = False;
         c->floating = False;
@@ -1250,81 +1250,4 @@ void update_struts(void)
 
         Bool is_dock = False;
         for (unsigned long j = 0; j < nitems; j++) {
-            if (types[j] == atom_net_wm_window_type_dock) {
-                is_dock = True;
-                break;
-            }
-        }
-        XFree(types);
-        if (!is_dock) {
-            continue;
-        }
-
-        long *str = NULL;
-        Atom actual;
-        int sfmt;
-        unsigned long len, rem;
-        if (XGetWindowProperty(dpy, w, atom_wm_strut_partial, 0, 12, False, XA_CARDINAL, &actual, &sfmt, &len, &rem,
-                               (unsigned char **)&str) == Success &&
-            str && len >= 4) {
-            reserve_left = MAX(reserve_left, str[0]);
-            reserve_right = MAX(reserve_right, str[1]);
-            reserve_top = MAX(reserve_top, str[2]);
-            reserve_bottom = MAX(reserve_bottom, str[3]);
-            XFree(str);
-        }
-        else if (XGetWindowProperty(dpy, w, atom_wm_strut, 0, 4, False, XA_CARDINAL, &actual, &sfmt, &len, &rem,
-                                    (unsigned char **)&str) == Success &&
-                 str && len == 4) {
-            reserve_left = MAX(reserve_left, str[0]);
-            reserve_right = MAX(reserve_right, str[1]);
-            reserve_top = MAX(reserve_top, str[2]);
-            reserve_bottom = MAX(reserve_bottom, str[3]);
-            XFree(str);
-        }
-    }
-    XFree(children);
-}
-
-void update_workarea(void)
-{
-    long workarea[4 * MAX_MONITORS];
-
-    for (int i = 0; i < monsn && i < MAX_MONITORS; i++) {
-        workarea[i * 4 + 0] = mons[i].x + reserve_left;
-        workarea[i * 4 + 1] = mons[i].y + reserve_top;
-        workarea[i * 4 + 2] = mons[i].w - reserve_left - reserve_right;
-        workarea[i * 4 + 3] = mons[i].h - reserve_top - reserve_bottom;
-    }
-    XChangeProperty(dpy, root, atom_net_workarea, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)workarea,
-                    monsn * 4);
-}
-
-void inc_gaps(void)
-{
-    user_config.gaps++;
-    tile();
-    update_borders();
-}
-
-void init_defaults(void)
-{
-    default_config.modkey = Mod4Mask;
-    default_config.gaps = 10;
-    default_config.border_width = 1;
-    default_config.border_foc_col = parse_col("#c0cbff");
-    default_config.border_ufoc_col = parse_col("#555555");
-    default_config.border_swap_col = parse_col("#fff4c0");
-    for (int i = 0; i < MAX_MONITORS; i++) {
-        default_config.master_width[i] = 50 / 100.0f;
-    }
-
-    default_config.motion_throttle = 60;
-    default_config.resize_master_amt = 5;
-    default_config.resize_stack_amt = 20;
-    default_config.snap_distance = 5;
-    default_config.bindsn = 0;
-    default_config.new_win_focus = True;
-    default_config.warp_cursor = True;
-
-    if (backup_binds) {
+            if (
