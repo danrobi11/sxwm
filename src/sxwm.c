@@ -1909,6 +1909,32 @@ void tile(void)
             continue;
         }
 
+        if (layout[m] == HORIZONTAL) {
+            int win_w = MAX(1, (tile_w - (N - 1) * gx) / N - bw2);
+            int x = tile_x;
+            for (int i = 0; i < N; i++) {
+                Client *c = stackers[i];
+                int bw2 = 2 * user_config.border_width;
+                XWindowChanges wc = {
+                    .x = x,
+                    .y = tile_y,
+                    .width = win_w,
+                    .height = MAX(1, tile_h - bw2),
+                    .border_width = user_config.border_width
+                };
+                if (c->x != wc.x || c->y != wc.y || c->w != wc.width || c->h != wc.height) {
+                    XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
+                }
+                c->x = wc.x;
+                c->y = wc.y;
+                c->w = wc.width;
+                c->h = wc.height;
+                x += win_w + gx;
+            }
+            update_borders();
+            continue;
+        }
+
         if (N == 1) {
             Client *c = stackers[0];
             int bw2 = 2 * user_config.border_width;
@@ -1929,24 +1955,4 @@ void tile(void)
         }
 
         // Master window
-        Client *master = stackers[0];
-        int bw2 = 2 * user_config.border_width;
-        XWindowChanges master_wc = {.x = tile_x,
-                                   .y = tile_y,
-                                   .width = MAX(1, master_w - bw2),
-                                   .height = MAX(1, tile_h - bw2),
-                                   .border_width = user_config.border_width};
-        if (master->x != master_wc.x || master->y != master_wc.y || master->w != master_wc.width ||
-            master->h != master_wc.height) {
-            XConfigureWindow(dpy, master->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &master_wc);
-        }
-        master->x = master_wc.x;
-        master->y = master_wc.y;
-        master->w = master_wc.width;
-        master->h = master_wc.height;
-
-        // Stack windows
-        int num_stack = N - 1;
-        int min_raw = bw2 + 1;
-        int total_fixed_heights = 0, auto_count = 0;
-        int heights
+        Client *master = stackers[0
