@@ -1925,20 +1925,21 @@ void tile(void)
         }
 
         // Master window
-        Client *c = stackers[0];
+        Client *master = stackers[0];
         int bw2 = 2 * user_config.border_width;
-        XWindowChanges wc = {.x = tile_x,
-                             .y = tile_y,
-                             .width = MAX(1, master_w - bw2),
-                             .height = MAX(1, tile_h - bw2),
-                             .border_width = user_config.border_width};
-        if (c->x != wc.x || c->y != wc.y || c->w != wc.width || c->h != wc.height) {
-            XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
+        XWindowChanges master_wc = {.x = tile_x,
+                                   .y = tile_y,
+                                   .width = MAX(1, master_w - bw2),
+                                   .height = MAX(1, tile_h - bw2),
+                                   .border_width = user_config.border_width};
+        if (master->x != master_wc.x || master->y != master_wc.y || master->w != master_wc.width ||
+            master->h != master_wc.height) {
+            XConfigureWindow(dpy, master->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &master_wc);
         }
-        c->x = wc.x;
-        c->y = wc.y;
-        c->w = wc.width;
-        c->h = wc.height;
+        master->x = master_wc.x;
+        master->y = master_wc.y;
+        master->w = master_wc.width;
+        master->h = master_wc.height;
 
         // Stack windows
         int num_stack = N - 1;
@@ -1947,15 +1948,19 @@ void tile(void)
         int heights_final[MAXCLIENTS] = {0};
         Bool is_fixed[MAXCLIENTS] = {0};
 
-        if (layout[m] == HORIZONTAL) {
-            int sx = tile_x + master_w + gx;
-            int total_hgaps = (num_stack - 1) * gx;
-            int stack_h = tile_h - 2 * user_config.border_width;
-            int stack_width = (stack_w - total_hgaps) / num_stack;
+        // Calculate heights for stack windows
+        for (int i = 1; i < N; i++) {
+            Client *c = stackers[i];
+            if (c->custom_stack_height > min_raw) {
+                heights_final[i - 1] = c->custom_stack_height;
+                is_fixed[i - 1] = True;
+                total_fixed_heights += c->custom_stack_height;
+            } else {
+                auto_count++;
+            }
+        }
 
-            for (int i = 1; i < N; i++) {
-                Client *c = stackers[i];
-                XWindowChanges wc = {.x = sx + (i - 1) * (stack_width + gx),
-                                     .y = tile_y,
-                                     .width = MAX(1, stack_width - bw2),
-                                     .
+        int stack_x = tile_x + master_w + gx;
+        int total_vgaps = (num_stack - 1) * gy;
+        int avail_height = tile_h - total_vgaps - num_stack * bw2;
+        int auto_height = (auto_count > 0) ? MAX(min_raw, (avail
