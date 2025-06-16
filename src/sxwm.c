@@ -1941,22 +1941,4 @@ void tile(void)
             XWindowChanges wc = {.x = tile_x,
                                  .y = tile_y,
                                  .width = MAX(1, tile_w - bw2),
-                                 .height = MAX(1, tile_h - bw2),
-                                 .border_width = user_config.border_width};
-            if (c->x != wc.x || c->y != wc.y || c->w != wc.width || c->h != wc.height) {
-                XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
-            }
-            c->x = wc.x;
-            c->y = wc.y;
-            c->w = wc.width;
-            c->h = wc.height;
-            update_borders();
-            continue;
-        }
-
-        // Master window
-        Client *master = stackers[0];
-        int bw2 = 2 * user_config.border_width;
-        XWindowChanges master_wc = {
-            .x = tile_x,
-            .y = tile_y,
+                                 .height = MAX(1,
