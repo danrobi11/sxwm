@@ -36,8 +36,8 @@
 #include "defs.h"
 #include "parser.h"
 
-// New: Layout enum for TILE, HORIZONTAL, FULLSCREEN
-typedef enum { TILE, HORIZONTAL, FULLSCREEN } Layout;
+// New: Layout enum for TILE, HORIZONTAL, MONOCLE
+typedef enum { TILE, HORIZONTAL, MONOCLE } Layout;
 
 Client *add_client(Window w, int ws);
 void change_workspace(int ws);
@@ -48,6 +48,10 @@ void startup_exec(void);
 Window find_toplevel(Window w);
 void focus_next(void);
 void focus_prev(void);
+void focus_next_mon(void);
+void focus_prev_mon(void);
+void move_next_mon(void);
+void move_prev_mon(void);
 int get_monitor_for(Client *c);
 void grab_keys(void);
 void hdl_button(XEvent *xev);
@@ -88,7 +92,8 @@ void tile(void);
 void toggle_floating(void);
 void toggle_floating_global(void);
 void toggle_fullscreen(void);
-void toggle_horizontal(void); // New: Function for horizontal layout
+void toggle_horizontal(void); // New: Horizontal layout
+void toggle_monocle(void);   // New: Monocle layout
 void update_borders(void);
 void update_client_desktop_properties(void);
 void update_monitors(void);
@@ -222,9 +227,8 @@ Client *add_client(Window w, int ws)
     c->mapped = True;
     c->custom_stack_height = 0;
 
-    // New: Set fullscreen for new windows if layout is FULLSCREEN
-    if (layout[c->mon] == FULLSCREEN) {
-        c->fullscreen = True;
+    // New: Set new windows to non-floating in MONOCLE mode
+    if (layout[c->mon] == MONOCLE) {
         c->floating = False;
     } else if (global_floating) {
         c->floating = True;
@@ -1047,7 +1051,11 @@ void hdl_map_req(XEvent *xev)
         c->fixed = True;
     }
 
-    if (should_float || global_floating) {
+    // New: Override should_float in MONOCLE mode
+    if (layout[c->mon] == MONOCLE) {
+        should_float = False;
+        c->floating = False;
+    } else if (should_float || global_floating) {
         c->floating = True;
     }
 
@@ -1168,7 +1176,7 @@ void hdl_motion(XEvent *xev)
 
     else if (drag_mode == DRAG_RESIZE) {
         int dx = e->x_root - drag_start_x;
-        int dy = e->x_root - drag_start_y;
+        int dy = e->y_root - drag_start_y;
         int nw = drag_orig_w + dx;
         int nh = drag_orig_h + dy;
         drag_client->w = nw < 20 ? 20 : nw;
@@ -1320,39 +1328,3 @@ void init_defaults(void)
     default_config.warp_cursor = True;
 
     if (backup_binds) {
-        for (unsigned long i = 0; i < LENGTH(binds); i++) {
-            default_config.binds[i].mods = binds[i].mods;
-            default_config.binds[i].keysym = binds[i].keysym;
-            default_config.binds[i].action.cmd = binds[i].action.cmd;
-            default_config.binds[i].type = binds[i].type;
-            default_config.bindsn++;
-        }
-    }
-
-    user_config = default_config;
-}
-
-void move_master_next(void)
-{
-    if (!workspaces[current_ws] || !workspaces[current_ws]->next) {
-        return;
-    }
-
-    Client *first = workspaces[current_ws];
-    Client *old_focused = focused;
-
-    workspaces[current_ws] = first->next;
-    first->next = NULL;
-
-    Client *tail = workspaces[current_ws];
-    while (tail->next) {
-        tail = tail->next;
-    }
-    tail->next = first;
-
-    tile();
-    if (user_config.warp_cursor && old_focused) {
-        warp_cursor(old_focused);
-    }
-    if (old_focused) {
-        send_wm_take_focus
