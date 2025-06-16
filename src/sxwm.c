@@ -1971,17 +1971,3 @@ void tile(void)
             update_borders();
             continue;
         }
-
-        // TILE layout (vertical stack)
-        for (int i = 1; i < N; i++) {
-            if (stackers[i]->custom_stack_height > 0) {
-                is_fixed[i] = True;
-                total_fixed_heights += stackers[i]->custom_stack_height;
-            }
-            else {
-                auto_count++;
-            }
-        }
-
-        int total_vgaps = (num_stack - 1) * gy;
-        int remaining =
