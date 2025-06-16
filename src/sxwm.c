@@ -1910,11 +1910,11 @@ void tile(void)
         }
 
         if (layout[m] == HORIZONTAL) {
+            int bw2 = 2 * user_config.border_width; // Define bw2
             int win_w = MAX(1, (tile_w - (N - 1) * gx) / N - bw2);
             int x = tile_x;
             for (int i = 0; i < N; i++) {
                 Client *c = stackers[i];
-                int bw2 = 2 * user_config.border_width;
                 XWindowChanges wc = {
                     .x = x,
                     .y = tile_y,
@@ -1937,22 +1937,4 @@ void tile(void)
 
         if (N == 1) {
             Client *c = stackers[0];
-            int bw2 = 2 * user_config.border_width;
-            XWindowChanges wc = {.x = tile_x,
-                                 .y = tile_y,
-                                 .width = MAX(1, tile_w - bw2),
-                                 .height = MAX(1, tile_h - bw2),
-                                 .border_width = user_config.border_width};
-            if (c->x != wc.x || c->y != wc.y || c->w != wc.width || c->h != wc.height) {
-                XConfigureWindow(dpy, c->win, CWX | CWY | CWWidth | CWHeight | CWBorderWidth, &wc);
-            }
-            c->x = wc.x;
-            c->y = wc.y;
-            c->w = wc.width;
-            c->h = wc.height;
-            update_borders();
-            continue;
-        }
-
-        // Master window
-        Client *master = stackers[0
+            int bw2
