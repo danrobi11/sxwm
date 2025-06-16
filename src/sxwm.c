@@ -1948,9 +1948,4 @@ void tile(void)
         // Stack windows
         int num_stack = N - 1;
         int min_raw = bw2 + 1;
-        int total_fixed_heights = 0, auto_count = 0;
-        int heights_final[MAXCLIENTS] = {0};
-        Bool is_fixed[MAXCLIENTS] = {0};
-
-        // Calculate heights for stack windows
-        for (int i = 1; i
+        int total_fixed
