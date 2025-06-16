@@ -25,7 +25,7 @@ const Binding binds[] = {
 
     {Mod4Mask, XK_l, {.fn = resize_master_add}, TYPE_FUNC},
     {Mod4Mask, XK_h, {.fn = resize_master_sub}, TYPE_FUNC},
-    {Mod4Mask, XK_t, {.fn = toggle_horizontal}, TYPE_FUNC}, // Horizontal layout
+    {Mod4Mask, XK_t, {.fn = toggle_horizontal}, TYPE_FUNC}, // New: Horizontal layout
 
     {Mod4Mask | ControlMask, XK_l, {.fn = resize_stack_add}, TYPE_FUNC},
     {Mod4Mask | ControlMask, XK_h, {.fn = resize_stack_sub}, TYPE_FUNC},
