@@ -36,6 +36,10 @@
 #include "defs.h"
 #include "parser.h"
 
+// Define MAX and MIN macros to avoid dependency issues
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 // Layout enum for TILE, HORIZONTAL, MONOCLE
 typedef enum { TILE, HORIZONTAL, MONOCLE } Layout;
 
@@ -1952,15 +1956,3 @@ void tile(void)
         for (int i = 1; i < N; i++) {
             Client *c = stackers[i];
             if (c->custom_stack_height > min_raw) {
-                heights_final[i - 1] = c->custom_stack_height;
-                is_fixed[i - 1] = True;
-                total_fixed_heights += c->custom_stack_height;
-            } else {
-                auto_count++;
-            }
-        }
-
-        int stack_x = tile_x + master_w + gx;
-        int total_vgaps = (num_stack - 1) * gy;
-        int avail_height = tile_h - total_vgaps - num_stack * bw2;
-        int auto_height = (auto_count > 0) ? MAX(min_raw, (avail
