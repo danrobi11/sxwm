@@ -36,7 +36,7 @@
 #include "defs.h"
 #include "parser.h"
 
-// Define MAX and MIN macros to avoid dependency issues
+// Define MAX and MIN macros to ensure portability
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -1953,6 +1953,4 @@ void tile(void)
         Bool is_fixed[MAXCLIENTS] = {0};
 
         // Calculate heights for stack windows
-        for (int i = 1; i < N; i++) {
-            Client *c = stackers[i];
-            if (c->custom_stack_height > min_raw) {
+        for (int i = 1; i
